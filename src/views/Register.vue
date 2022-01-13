@@ -2,11 +2,15 @@
     <div class="login">
         <van-nav-bar
             class="header"
-            title="登录"
+            title="注册会员"
             left-text="返回"
             left-arrow
             @click-left="goPage('/')"
-            />
+        >
+        <template #right>
+            <van-icon name="wap-home" />
+        </template>
+        </van-nav-bar>
 
         <van-image
             width="100"
@@ -18,8 +22,8 @@
             <van-field
                 v-model="username"
                 name="Username"
-                label="账号"
-                placeholder="请输入账号"
+                label="会员账号"
+                placeholder="5～12位数字和字母"
                 :rules="[{ required: true, message: '' }]"
             />
             <van-field
@@ -27,7 +31,22 @@
                 type="password"
                 name="Password"
                 label="密码"
-                placeholder="请输入密码"
+                placeholder="真实姓名，需与回款卡姓名相同"
+                :rules="[{ required: true, message: '' }]"
+            />
+            <van-field
+                v-model="username"
+                name="Username"
+                label="真实姓名"
+                placeholder="真实姓名，需与回款卡姓名相同"
+                :rules="[{ required: true, message: '' }]"
+            />
+            <van-field
+                v-model="password"
+                type="password"
+                name="Password"
+                label="资金密码"
+                placeholder="请输入6位纯数字组成的资金密码"
                 :rules="[{ required: true, message: '' }]"
             />
             <van-field
@@ -39,7 +58,7 @@
             />
             <div style="margin: 16px;">
                 <van-button round block type="info" native-type="submit">
-                 登录
+                  注册
                 </van-button>
             </div>
         </van-form>
@@ -47,12 +66,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Toast } from 'vant'
 @Component({
   components: {
   }
 })
-export default class Login extends Vue {
+export default class Register extends Vue {
     private username?: string = ''
     private password?: string = ''
     private code?: string = ''
@@ -69,6 +87,12 @@ export default class Login extends Vue {
 }
 </script>
 <style lang="scss">
+.van-nav-bar__right{
+    i{
+        font-size: 24px;
+        color: #fff !important;
+    }
+}
 .logo-login{
     margin: 4rem auto 0.8334rem;
 }
