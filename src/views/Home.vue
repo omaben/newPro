@@ -3,26 +3,25 @@
     <van-nav-bar
       title="创新科技 "
       class="header"
-      :fixed ='fixed'
     />
     <van-swipe>
-      <van-swipe-item v-for="(image, index) in images" :key="index">
+      <van-swipe-item v-for="(image, index) in images" :autoplay="3000" :key="index">
         <img v-lazy="image" />
       </van-swipe-item>
     </van-swipe>
     <van-cell-group>
-      <van-cell icon="volume" title="" is-link value="更多"  class="left-red" />
-      <van-cell title="热门商家" is-link  value="全部" class="right-red" />
+      <!--van-cell icon="volume" title="" is-link value="更多"  class="left-red" /-->
+      <van-cell title="热门商家" is-link  value="全部" class="right-red" @click="goPage('/businessList')" />
     </van-cell-group>
     <van-grid :column-num="3">
-      <van-grid-item v-for="(item,index) in homeInfo" :key="index" class="home-info">
+      <van-grid-item v-for="(item,index) in homeInfo" :key="index" class="home-info" @click="goPage('/makeOrder/'+item.id)">
         <van-image
           width="55"
           height="55"
-          :src="item.img"
+          :src="domain+item.image"
         />
         <h5>{{item.title}}</h5>
-        <p>{{item.desc}}</p>
+        <p>全天共{{item.issue_number}}单</p>
       </van-grid-item>
     </van-grid>
     <Footer active='home' />
@@ -30,92 +29,83 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import Footer from '@/components/common/Footer.vue' // @ is an alias to /src
-import { Lazyload } from 'vant'
+import { Component, Vue } from "vue-property-decorator";
 
-Vue.use(Lazyload)
+import Footer from "@/components/common/Footer.vue"; // @ is an alias to /src
+import {
+  configs,
+  getCarousels,
+  rooms
+
+} from "@/services";
+import { Lazyload } from "vant";
+Vue.use(Lazyload);
 
 @Component({
   components: {
-    Footer
-  }
+    Footer,
+  },
 })
 export default class Home extends Vue {
-  private fixed?: boolean = true
-  private images?: any = [
-    require('@/assets/slider1.jpeg'),
-    require('@/assets/slider2.jpeg'),
-    require('@/assets/slider3.jpeg'),
-    require('@/assets/slider4.jpeg')
-  ]
 
-  private homeInfo?: any = [
-    {
-      img: require('@/assets/pic1.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic2.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic3.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic4.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic5.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic6.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic7.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic8.png'),
-      title: '唯品会',
-      desc: '全天共288单'
-    },
-    {
-      img: require('@/assets/pic9.png'),
-      title: '唯品会',
-      desc: '全天共288单'
+  private fixed?: boolean = true;
+  private images?: any = [];
+  private domain?: any = '';
+
+  private homeInfo?: any = [];
+  public mounted() {
+     this.configs();
+    window.scrollTo(0, 0);
+     this.getRooms();
+    //this.getCarousels();
+   
+   
+  }
+
+  private goPage(url: string) {
+    if (this.$route.path === url) {
+      return;
     }
-  ]
+    this.$router.push({ path: url });
+  }
+
+  private getCarousels() {
+    const post: any = null;
+    getCarousels(post).then((res) => {
+      let data = res.data
+      if(data)
+      data.forEach((item: any) => {
+        let url = this.domain + item.image
+        this.images.push(url)
+      })
+    });
+  }
+
+  private getRooms() {
+     const post: any = null;
+      rooms(post).then((res) => {
+        this.homeInfo = res.data.data
+      });
+  }
+
+  private configs() {
+    const post: any = null;
+    configs(post).then((res) => {
+      if(res.code === 200){
+        this.domain = res.data.domain
+        this.getCarousels()
+      }
+    });
+  }
 }
 </script>
 <style lang="scss">
 body{
       background: #f5f5f5;
 }
-.home{
-  padding-top: 50px;
-}
   .van-nav-bar.header{
     padding: 3px 0;
     background-color: #e01509;
-    .van-nav-bar__title{
-      line-height: 40px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: 400;
-      color: #fff;
-    }
   }
   .van-swipe{
     height: 150px;
